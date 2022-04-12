@@ -30,4 +30,6 @@ wget -qO- https://get.haskellstack.org/ | sh
 from terminal:
 
 1. stack build (run this command after every change)
-2. stack exec FPzadanie-exe
+2. stack exec FPzadanie-exe*
+
+*first time running this command will install GHC (~460MB)
