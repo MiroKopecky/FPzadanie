@@ -1,18 +1,17 @@
 module Main where
 
-import Lib
+import System.IO ()
+import Parser ( parseWebSite )
 
-integer :: Int 
-integer = 3
+main :: IO ()
+main = do
+   --PARSING--
+   let fileName = "data/output.jl" -- After complete parser change filename for "data/collection.jl" instead "data/output.jl"
+   parsedWeb <- Parser.parseWebSite fileName -- parsedWeb - contain parsed web text
+   print parsedWeb
 
-str :: String
-str = "Hello World!"
+   --INDEXER--
 
-character :: Char
-character = 'C'
+   --PAGE RANK--
 
-function :: (String)
-function = (str)
-
-main :: IO () 
-main = print function
+   putStrLn "Done!"
