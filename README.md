@@ -33,3 +33,4 @@ from terminal:
 2. stack exec FPzadanie-exe*
 
 *first time running this command will install GHC (~460MB)
+
