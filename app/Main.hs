@@ -6,7 +6,7 @@ module Main where
 
 import System.IO (openFile, IOMode (WriteMode), hPutStrLn)
 import Parser
-import Data.Text
+import Data.Text(Text, strip, splitOn, words)
 import GHC.Generics
 import Data.Aeson.Types (parseJSON)
 import Data.Aeson
@@ -16,6 +16,7 @@ import Control.Monad
 import Text.HTML.Scalpel
 import Control.Applicative
 
+
 data Pages =
   Pages {url :: !Text, html_content :: !Text} deriving (Show,Generic)
 
@@ -23,6 +24,11 @@ data Pages =
 instance FromJSON Pages
 instance ToJSON Pages
 
+
+
+parseText :: [Text] -> [Text]
+parseText [] = []
+parseText (x:xs) = (Data.Text.words x) ++ (parseText xs)
 
 main :: IO ()
 main = do
@@ -36,8 +42,11 @@ main = do
      Right pages -> do
       -- pages je pole datovych tried [Pages]
        --print . html_content $ Prelude.head pages
-      let scrapedDivs = scrapeStringLike (html_content $ Prelude.head pages) (texts(tagSelector "div"))
-      print scrapedDivs
+      let scrapedDivs = scrapeStringLike (html_content $ head pages) (texts(tagSelector "div"))
+      case scrapedDivs of
+        Just x -> print $ parseText x
+        Nothing -> putStrLn "err"
+
       --print Prelude.concatMap (splitOn " ") (Prelude.head scrapedDivs)
     -- If d is Left, the JSON was malformed.
     -- In that case, we report the error.
