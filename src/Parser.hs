@@ -23,6 +23,7 @@ jsonFile = "data/output.json"
 getJSON :: IO B.ByteString
 getJSON = B.readFile jsonFile
 
+
 -- Main function for parsing web data
 parseWebSite :: FilePath -> IO String
 parseWebSite fileName = do

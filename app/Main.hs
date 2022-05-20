@@ -13,10 +13,8 @@ import Data.Aeson
 import Control.Applicative
 import Control.Monad
 
-
-
-
-
+import Text.HTML.Scalpel
+import Control.Applicative
 
 data Pages =
   Pages {url :: !Text, html_content :: !Text} deriving (Show,Generic)
@@ -26,20 +24,21 @@ instance FromJSON Pages
 instance ToJSON Pages
 
 
-
-
 main :: IO ()
 main = do
    --PARSING--
    --let fileName = "data/output.json" -- After complete parser change filename for "data/collection.jl" instead "data/output.jl"
    --parsedWeb <- Parser.parseWebSite fileName -- parsedWeb - contain parsed web text--
    d <- (eitherDecode <$> getJSON) :: IO (Either String [Pages])
+
    case d of
      Left err -> putStrLn err
      Right pages -> do
       -- pages je pole datovych tried [Pages]
-       print . html_content $ Prelude.head pages
-       
+       --print . html_content $ Prelude.head pages
+      let scrapedDivs = scrapeStringLike (html_content $ Prelude.head pages) (texts(tagSelector "div"))
+      print scrapedDivs
+      --print Prelude.concatMap (splitOn " ") (Prelude.head scrapedDivs)
     -- If d is Left, the JSON was malformed.
     -- In that case, we report the error.
     -- Otherwise, we perform the operation of
