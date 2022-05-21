@@ -6,7 +6,7 @@ module Main where
 
 import System.IO (openFile, IOMode (WriteMode), hPutStrLn)
 import Parser
-import Data.Text(Text, strip, splitOn, words)
+import Data.Text(Text, strip, splitOn, words, unpack, replace, length)
 import GHC.Generics
 import Data.Aeson.Types (parseJSON)
 import Data.Aeson
@@ -17,25 +17,22 @@ import Text.HTML.Scalpel
 import Control.Applicative
 
 
-data Pages =
-  Pages {url :: !Text, html_content :: !Text} deriving (Show,Generic)
+data Page =
+  Page {url :: !Text, html_content :: !Text} deriving (Show,Generic)
 
+pattern = ["\237", "\231", "\227", "\243", "\225", "\250", "\245", "\233", "\234", "\224", "\244", "\205", "\186", "\226", "\211", "\193", "<div", "<li>", "</li>",
+            "</div>", "</a>", "{{/pageLink}}", "<li", "<span>", "</ul>", "<a", "<img", "<span", "</span>", "<form", "<ul", "<figure", "</figure>"] 
 
-instance FromJSON Pages
-instance ToJSON Pages
+instance FromJSON Page
+instance ToJSON Page
 
-
-
-parseText :: [Text] -> [Text]
-parseText [] = []
-parseText (x:xs) = (Data.Text.words x) ++ (parseText xs)
 
 main :: IO ()
 main = do
    --PARSING--
    --let fileName = "data/output.json" -- After complete parser change filename for "data/collection.jl" instead "data/output.jl"
    --parsedWeb <- Parser.parseWebSite fileName -- parsedWeb - contain parsed web text--
-   d <- (eitherDecode <$> getJSON) :: IO (Either String [Pages])
+   d <- (eitherDecode <$> getJSON) :: IO (Either String [Page])
 
    case d of
      Left err -> putStrLn err
@@ -43,8 +40,9 @@ main = do
       -- pages je pole datovych tried [Pages]
        --print . html_content $ Prelude.head pages
       let scrapedDivs = scrapeStringLike (html_content $ head pages) (texts(tagSelector "div"))
+
       case scrapedDivs of
-        Just x -> print $ parseText x
+        Just x -> print $ parseText x pattern
         Nothing -> putStrLn "err"
 
       --print Prelude.concatMap (splitOn " ") (Prelude.head scrapedDivs)
@@ -53,7 +51,6 @@ main = do
     -- Otherwise, we perform the operation of
     -- our choice. In this case, just print it.
   
-   putStrLn $ "Decode: " ++ (show (decode "{ \"url\": \"example.com\", \"html_content\": \"<div>asdf</div>\" }" :: Maybe Pages))
 
    --INDEXER--
 
