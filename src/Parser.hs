@@ -11,7 +11,7 @@ module Parser
 
 import System.IO ( hGetLine, openFile, IOMode(ReadMode) )
 import qualified Data.ByteString.Lazy as B
-import Data.Text(Text, strip, splitOn, words, unpack, replace, length, pack)
+import Data.Text(Text, strip, splitOn, words, unpack, replace, length, pack, head)
 
 {-
     TODO:
@@ -20,7 +20,7 @@ import Data.Text(Text, strip, splitOn, words, unpack, replace, length, pack)
 
 ignoreLongWords :: [Text] -> [Text]
 ignoreLongWords [] = []
-ignoreLongWords (x:xs) = if (Data.Text.length x) > 14 then ignoreLongWords xs else x:(ignoreLongWords xs) 
+ignoreLongWords (x:xs) = if ((Data.Text.length x) > 14) then ignoreLongWords xs else x:(ignoreLongWords xs) 
 
 replaceWithBlank :: [Text] -> Text -> Text
 replaceWithBlank [] y = y

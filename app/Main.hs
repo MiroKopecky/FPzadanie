@@ -20,8 +20,10 @@ import Control.Applicative
 data Page =
   Page {url :: !Text, html_content :: !Text} deriving (Show,Generic)
 
-pattern = ["\237", "\231", "\227", "\243", "\225", "\250", "\245", "\233", "\234", "\224", "\244", "\205", "\186", "\226", "\211", "\193", "<div", "<li>", "</li>",
-            "</div>", "</a>", "{{/pageLink}}", "<li", "<span>", "</ul>", "<a", "<img", "<span", "</span>", "<form", "<ul", "<figure", "</figure>"] 
+pattern = ["\237", "\231", "\227", "\243", "\225", "\250", "\245", "\233", "\234", "\224", "\244", "\205", "\186", "\226", "\211", "\193", "\218","<div", "<li>", "</li>",
+            "</div>", "</a>", "{{/pageLink}}", "<li", "<span>", "</ul>", "<a", "<img", "<span", "</span>", "<form", "<ul", "<figure", "</figure>", "<h2>", "</h2>",
+            "</form>", "<fieldset>", "</fieldset>", "<input", "{{/hasImage}}", "{{#items}}", "<button", "{{time}}", "{{#hasImage}}", "{{/isLogged}}", "{{^isLogged}}",
+            "{{#docs}}", "{{#imagem}}"] 
 
 instance FromJSON Page
 instance ToJSON Page
@@ -38,18 +40,15 @@ main = do
      Left err -> putStrLn err
      Right pages -> do
       -- pages je pole datovych tried [Pages]
-       --print . html_content $ Prelude.head pages
+      --TODO : aplikovat to na viacere stranky
       let scrapedDivs = scrapeStringLike (html_content $ head pages) (texts(tagSelector "div"))
 
       case scrapedDivs of
-        Just x -> print $ parseText x pattern
         Nothing -> putStrLn "err"
-
+        Just x -> do
+          let parsedText = parseText x pattern
+          print parsedText
       --print Prelude.concatMap (splitOn " ") (Prelude.head scrapedDivs)
-    -- If d is Left, the JSON was malformed.
-    -- In that case, we report the error.
-    -- Otherwise, we perform the operation of
-    -- our choice. In this case, just print it.
   
 
    --INDEXER--
