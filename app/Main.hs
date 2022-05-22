@@ -15,7 +15,7 @@ import Control.Monad
 
 import Text.HTML.Scalpel
 import Control.Applicative
-import Data.Text as TS
+--import Data.Text as TS
 import Data.Typeable
 
 import qualified Data.ByteString.Lazy as B
@@ -36,7 +36,7 @@ instance FromJSON Page where
    parseJSON _ = Control.Applicative.empty
 instance ToJSON Page
 
-parsePage :: [B.ByteString] -> [[Text]]
+parsePage :: [B.ByteString] -> [(Text, [Text])]
 parsePage [] = []
 parsePage (x:xs) = do
    let decodedPage = decode x :: Maybe Page
@@ -47,18 +47,10 @@ parsePage (x:xs) = do
          case scrapedDivs of
            Nothing -> (parsePage xs)
            Just x -> do
+             let pageUrl = url decodedPage
              let parsedText = parseText x pattern
-             parsedText : parsePage xs
-
---https://hackage.haskell.org/package/scalpel-0.6.2/docs/Text-HTML-Scalpel.html
-
-getUrl a = ((url a), scrapeStringLike (html_content a) (texts(tagSelector "div")))
-
-getPageContent a = Prelude.map (\x -> getUrl x) a
-
-parsingText a = parseText a pattern
-
-getParsed a = Prelude.map (parsingText) a
+             let parsedPage = (pageUrl, parsedText)
+             parsedPage : parsePage xs
 
 main :: IO ()
 main = do
@@ -66,26 +58,9 @@ main = do
    content <- getJSON
    let splitContent = (B.split 10 content)
 
-   print splitContent
-   --TODO: splitContent need transform from '[B.ByteString]' to '[Page]'
+   let parsedSplitContent = parsePage splitContent
 
-   {-
-   -- TODO: Rework this code for .jl file
-   let scrapedDivs = getPageContent splitContent
-   print scrapedDivs
-   putStrLn ""
-   
-  
-   case (snd (Prelude.head scrapedDivs)) of
-    Nothing -> putStrLn "err"
-    Just x -> do
-      let t = TS.pack $ Prelude.head x
-      let parsedText = getParsed [[t]]
-      print parsedText
-  -}
-
-   -- vypise naparsovanu prvu stranku
-   -- print (head (parsePage splitContent))
+   print parsedSplitContent
 
    --INDEXER--
 
