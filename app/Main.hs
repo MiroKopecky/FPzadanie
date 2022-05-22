@@ -6,6 +6,7 @@ module Main where
 
 import System.IO (openFile, IOMode (WriteMode), hPutStrLn, hGetLine, IOMode(ReadMode) )
 import Parser
+import Indexer
 import Data.Text(Text, strip, splitOn, words, unpack, replace, length)
 import GHC.Generics
 import Data.Aeson.Types (parseJSON)
@@ -69,6 +70,11 @@ parsePage (x:xs) = do
                   let parsedPage = (pageUrl, parsedText, parsedPageLinks)
                   parsedPage : parsePage xs
 
+infLoop x = do
+   --l <- getLine  
+   makeResultsByQuery x 
+   infLoop x
+
 main :: IO ()
 main = do
    --PARSING--
@@ -76,10 +82,12 @@ main = do
    let splitContent = (B.split 10 content)
 
    let parsedSplitContent = parsePage splitContent
-   print (head parsedSplitContent)
+   ---print (head parsedSplitContent)
    --print parsedSplitContent
 
    --INDEXER--
+   ---makeResultsByQuery parsedSplitContent
+   infLoop parsedSplitContent
 
    --PAGE RANK--
    putStrLn "Done!"

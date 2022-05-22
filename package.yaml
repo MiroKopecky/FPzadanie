@@ -27,6 +27,7 @@ dependencies:
 - text
 - scalpel
 - containers
+- split >= 0.2.3.4
 
 library:
   source-dirs: src
