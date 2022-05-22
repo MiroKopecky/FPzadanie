@@ -17,8 +17,12 @@ import Text.HTML.Scalpel
 import Control.Applicative
 --import Data.Text as TS
 import Data.Typeable
+import Data.List
 
 import qualified Data.ByteString.Lazy as B
+import Data.Map (Map)
+import qualified Data.Map as Map
+
 
 data Page =
   Page {url :: !Text, html_content :: !Text} deriving (Show,Generic)
@@ -36,21 +40,34 @@ instance FromJSON Page where
    parseJSON _ = Control.Applicative.empty
 instance ToJSON Page
 
-parsePage :: [B.ByteString] -> [(Text, [Text])]
+convertLinks :: [[Text]] -> [Map Text Int]
+convertLinks [] = []
+convertLinks (x:xs) = do
+   let emptyMap = Map.empty
+   let newMap = (Map.insert (head x) (Data.List.length x) emptyMap)
+   newMap : (convertLinks xs)
+
+parsePage :: [B.ByteString] -> [(Text, [Text], [Map Text Int])]
 parsePage [] = []
 parsePage (x:xs) = do
    let decodedPage = decode x :: Maybe Page
    case decodedPage of
       Nothing -> (parsePage xs)
       Just decodedPage -> do
+         let scrapedHrefs = scrapeStringLike (html_content $ decodedPage) (attrs "href" "a")
          let scrapedDivs = scrapeStringLike (html_content $ decodedPage) (texts(tagSelector "div"))
          case scrapedDivs of
            Nothing -> (parsePage xs)
            Just x -> do
              let pageUrl = url decodedPage
              let parsedText = parseText x pattern
-             let parsedPage = (pageUrl, parsedText)
-             parsedPage : parsePage xs
+             case scrapedHrefs of
+                Nothing -> (parsePage xs)
+                Just x -> do
+                  let pageLinks = Data.List.group (Data.List.sort x)
+                  let parsedPageLinks = (convertLinks pageLinks)
+                  let parsedPage = (pageUrl, parsedText, parsedPageLinks)
+                  parsedPage : parsePage xs
 
 main :: IO ()
 main = do
@@ -59,8 +76,8 @@ main = do
    let splitContent = (B.split 10 content)
 
    let parsedSplitContent = parsePage splitContent
-
-   print parsedSplitContent
+   print (head parsedSplitContent)
+   --print parsedSplitContent
 
    --INDEXER--
 

@@ -34,6 +34,7 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , http-conduit
     , scalpel
     , text
@@ -51,6 +52,7 @@ executable FPzadanie-exe
     , aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , http-conduit
     , scalpel
     , text
@@ -69,6 +71,7 @@ test-suite FPzadanie-test
     , aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
     , http-conduit
     , scalpel
     , text
