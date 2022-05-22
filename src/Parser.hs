@@ -34,7 +34,7 @@ loadFile :: FilePath -> IO B.ByteString
 loadFile = B.readFile
 
 jsonFile :: FilePath
-jsonFile = "data/output.json"
+jsonFile = "data/output.jl"
 
 getJSON :: IO B.ByteString
 getJSON = B.readFile jsonFile
