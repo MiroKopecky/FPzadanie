@@ -36,4 +36,4 @@ from terminal:
 
 
 # Run Test
-For code to run correct you need to add output.jl file into data folder.
+For code to run correct you need to add .jl file, on which you want to run the code, into data folder.
