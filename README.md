@@ -37,5 +37,5 @@ from terminal:
 
 # Run Test
 For code to run correct you need to change location for .jl file. 
-In file "src/Parser.hs" is "jsonFile" function which contain name of testing .jl file.
+In file "src/Parser.hs" is "jsonFile" function which contains the name of a .jl file, which will be parsed.
 
