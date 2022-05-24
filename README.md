@@ -36,4 +36,6 @@ from terminal:
 
 
 # Run Test
-For code to run correct you need to add .jl file, on which you want to run the code, into data folder.
+For code to run correct you need to change location for .jl file. 
+In file "src/Parser.hs" is "jsonFile" function which contain name of testing .jl file.
+
