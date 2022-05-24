@@ -34,3 +34,6 @@ from terminal:
 
 *first time running this command will install GHC (~460MB)
 
+
+# Run Test
+For code to run correct you need to add output.jl file into data folder.
